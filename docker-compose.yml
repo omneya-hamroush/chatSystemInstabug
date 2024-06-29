@@ -1,5 +1,11 @@
 version: '3'
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"    # RabbitMQ server port
+      - "15672:15672"  # RabbitMQ management console port
+
   mysql:
     image: mysql
     ports:
@@ -20,6 +26,7 @@ services:
       - ".:/workspace"
     depends_on:
       - mysql
+      - rabbitmq
 
   golang-app:
     build:
@@ -28,6 +35,8 @@ services:
       - "8080:8080"  # Expose Golang server port
     depends_on:
       - mysql
+      - rabbitmq
+
 
 volumes:
   dbdata:
