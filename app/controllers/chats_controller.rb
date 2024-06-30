@@ -2,7 +2,6 @@ class ChatsController < ApplicationController
     protect_from_forgery with: :null_session # For CSRF issues
     skip_before_action :verify_authenticity_token, only: [:create]
     def create
-        puts "PARAMSSSSSSSSS", params[:chat][:application_id], "OOOOOOOO", params[:chat][:number]
         redis = Redis.new(url: 'redis://redis:6379/0')
         chat = { application_id: params[:application_id], number: params[:number] }
         redis.lpush('golang_chats', chat.to_json)
