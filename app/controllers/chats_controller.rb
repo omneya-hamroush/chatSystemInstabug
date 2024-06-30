@@ -1,32 +1,46 @@
 class ChatsController < ApplicationController
     protect_from_forgery with: :null_session # For CSRF issues
     skip_before_action :verify_authenticity_token, only: [:create]
-
     def create
-        @chat = Chat.new(chat_params)
-        if @chat.save
-        # Enqueue chat to be sent to Golang
-        enqueue_chat(@chat)
-        render json: { status: 'Chat created and enqueued' }, status: :created
-        else
-        render json: { errors: @chat.errors.full_messages }, status: :unprocessable_entity
-        end
+        puts "PARAMSSSSSSSSS", params[:chat][:application_id], "OOOOOOOO", params[:chat][:number]
+        redis = Redis.new(url: 'redis://redis:6379/0')
+        chat = { application_id: params[:application_id], number: params[:number] }
+        redis.lpush('golang_chats', chat.to_json)
+        puts "NEW C?HATTTTTTTTTTTTtt", chat.to_json
+        
+        render json: { status: 'enqueued' }, status: :ok
     end
+    # def create
+    #     chat = Chat.new(chat_params)
 
-    private
+    #     if chat.save
+    #         # Enqueue the chat for processing in Golang via Redis
+    #         redis = Redis.new(url: 'redis://redis:6379/0')  # Adjust URL based on Docker Compose setup
+    #         redis.lpush('golang_chats', { application_id: chat.application_id, number: chat.number }.to_json)
 
-    def chat_params
-        params.require(:chat).permit(:application_id, :number)
-    end
+    #         render json: { message: 'Chat created and enqueued' }
 
-    def enqueue_chat(chat)
-        conn = Bunny.new
-        conn.start
-        ch = conn.create_channel
-        q = ch.queue('chats')
-    
-        q.publish(chat.to_json)
-        conn.close
-        # Code to send the chat data to the Golang app (e.g., via a message queue)
-    end
+    #         # redis = Redis.new(url: 'redis://redis:6379/0')  # Adjust URL based on Docker Compose setup
+
+    #         # while true do
+    #         #     result = redis.brpop(10, 'golang_chats')
+    #         #     if result
+    #         #         chat_data = JSON.parse(result[1])
+    #         #         puts "Received chat: #{chat_data}"
+    #         #         # Process the chat data
+    #         #         render json: { message: 'Chat enqueued and dequeued' }
+    #         #     else
+    #         #         puts "No messages found in queue 'golang_chats'"
+    #         #     end
+    #         # end
+    #     else
+    #         render json: { errors: chat.errors.full_messages }, status: :unprocessable_entity
+    #     end
+    #     end
+
+    #     private
+
+    #     def chat_params
+    #     params.require(:chat).permit(:application_id, :number)
+    #     end
 end

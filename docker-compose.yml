@@ -1,10 +1,9 @@
 version: '3'
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
+  redis:
+    image: redis:latest
     ports:
-      - "5672:5672"    # RabbitMQ server port
-      - "15672:15672"  # RabbitMQ management console port
+      - "6379:6379"
 
   mysql:
     image: mysql
@@ -20,13 +19,14 @@ services:
     build: .
     environment:
       RAILS_ENV: development
+      REDIS_URL: redis://redis:6379/0  # Set Redis URL for Rails application
     ports:
       - '3000:3000'
     volumes:
       - ".:/workspace"
     depends_on:
       - mysql
-      - rabbitmq
+      - redis
 
   golang-app:
     build:
@@ -35,8 +35,7 @@ services:
       - "8080:8080"  # Expose Golang server port
     depends_on:
       - mysql
-      - rabbitmq
-
+      - redis
 
 volumes:
   dbdata:
