@@ -51,6 +51,8 @@ gem 'elasticsearch-rails'
 
 gem 'whenever', require: false
 
+gem 'sidekiq'
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 

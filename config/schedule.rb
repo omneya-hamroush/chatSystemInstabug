@@ -18,6 +18,6 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
-very 2.minutes do
+every 2.minutes do
     rake 'update_counts:update'
 end
