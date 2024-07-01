@@ -7,7 +7,11 @@ Rails.application.routes.draw do
   resources :applications, only: [:create]
   # resources :chats, only: [:create]
   post 'create_chat', to: 'chats#create'
+
+  # resources :messages do
   post 'create_message', to: 'messages#create'
+  get 'messages_search', to: 'messages#search'
+  # end
 
 
 end

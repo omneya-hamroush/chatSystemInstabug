@@ -9,4 +9,36 @@ class MessagesController < ApplicationController
       
       render json: { status: 'enqueued message' }, status: :ok
   end
+
+  # def search
+  #   chat_id = params[:chat_id]
+  #   query = params[:q]
+
+  #   if chat_id.present?
+  #     messages = Message.search(query, where: { chat_id: chat_id }).records.to_a
+  #   else
+  #     messages = Message.search(query).records.to_a
+  #   end
+
+  #   render json: messages
+  # end
+  def search
+    chat_id = params[:chat_id]
+    # query = params[:query]
+
+    Rails.logger.debug "Chat ID: #{chat_id}"
+    results = Message.search({
+      query: {
+        bool: {
+          must: [
+            { match: { chat_id: chat_id } },
+            # { match: { body: query } }
+          ]
+        }
+      }
+    }).records
+    puts "RESSSSSSSSSSSSSSS", results
+
+    render json: results
+  end
 end

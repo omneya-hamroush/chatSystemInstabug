@@ -15,11 +15,20 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: dev
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
   app:
     build: .
     environment:
       RAILS_ENV: development
       REDIS_URL: redis://redis:6379/0  # Set Redis URL for Rails application
+      DATABASE_URL: mysql2://root:root@mysql:3306/dev  # MySQL connection
+      ELASTICSEARCH_URL: http://elasticsearch:9200  # Elasticsearch connection
     ports:
       - '3000:3000'
     volumes:
@@ -27,6 +36,7 @@ services:
     depends_on:
       - mysql
       - redis
+      - elasticsearch
 
   golang-app:
     build:

@@ -1,0 +1,84 @@
+# Response from Elasticsearch is just a String, so it's not possible to compare using headers.
+-
+  :file:        'cat.aliases/20_headers.yml'
+  :description: 'Simple alias with yaml body through Accept header'
+
+# Check version skip logic
+-
+  :file:        'create/15_without_id.yml'
+  :description: 'Create without ID'
+
+# Error message doesn't match
+-
+  :file:        'tasks.get/10_basic.yml'
+  :description: 'get task test'
+
+# Figure out how to match response when there is an error
+-
+  :file:        'cat.templates/10_basic.yml'
+  :description: '*'
+
+# https://github.com/elastic/elasticsearch-ruby/issues/1563
+-
+  :file:        'tsdb/80_index_resize.yml'
+  :description: 'shrink'
+-
+  :file:        'tsdb/80_index_resize.yml'
+  :description: 'clone'
+-
+  :file: 'cluster.desired_nodes/10_basic.yml'
+  :description: 'Test update desired nodes is idempotent'
+-
+  :file: 'cluster.desired_nodes/10_basic.yml'
+  :description: 'Test update desired nodes is idempotent with different order'
+-
+  :file: 'cluster.desired_nodes/10_basic.yml'
+  :description: 'Test node version must be at least the current master version'
+-
+  :file: 'cluster.desired_nodes/10_basic.yml'
+  :description: 'Test node version must have content'
+-
+  :file: 'search.vectors/40_knn_search.yml'
+  :description: 'Direct kNN queries are disallowed'
+-
+  :file: 'search.vectors/45_knn_search_byte.yml'
+  :description: 'Direct kNN queries are disallowed'
+-
+  :file: 'tsdb/25_id_generation.yml'
+  :description: 'generates a consistent id'
+-
+  :file: 'indices.resolve_cluster/10_basic_resolve_cluster.yml'
+  :description: 'Resolve cluster using alias and index that does not exist'
+-
+  :file: 'health/10_basic.yml' # Migrated to written manually
+  :description: 'cluster health basic test'
+-
+  :file: 'cat.allocation/10_basic.yml'
+  :description: 'One index'
+-
+  :file: 'cat.allocation/10_basic.yml'
+  :description: 'Node ID'
+-
+  :file: 'cat.allocation/10_basic.yml'
+  :description: 'All Nodes'
+-
+  :file: 'cat.allocation/10_basic.yml'
+  :description: 'Column headers'
+-
+  :file: 'cat.allocation/10_basic.yml'
+  :description: 'Bytes'
+-
+  :file: 'search.vectors/120_knn_query_multiple_shards.yml'
+  :description: 'Search for 2 knn queries combines scores from them'
+-
+  :file: 'search.vectors/140_knn_query_with_other_queries.yml'
+  :description: 'Function score query with knn query'
+-
+  :file: 'search.vectors/60_knn_search_filter_alias.yml'
+  :description: 'kNN filter alias'
+-
+  :file: 'cluster.desired_nodes/11_old_format.yml'
+  :description: 'Test node version must be at least the current master version'
+-
+  :file: 'cluster.desired_nodes/11_old_format.yml'
+  :description: 'Test node version must have content'
