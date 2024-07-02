@@ -1,25 +1,22 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Restful chat system application
+This application is dockerized to simplify setup and deployment. Follow these steps to run the application using Docker:
 
-Things you may want to cover:
+1- Ensure Docker is installed on your system.
 
-* Ruby version
+2- Clone the repository to your local machine.
 
-* System dependencies
+3- Navigate to the project directory.
 
-* Configuration
+4- Start the Docker containers:
 
-* Database creation
+docker-compose up
 
-* Database initialization
+# Technical Details Covered:
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# instabugChatSystemTask
+1- Mysql used as the main database adapter.
+2- Restful CRUD APIs implemented for application, chat, and messaging models.
+3- Elasticsearch integrated for message search within chats based on message content and chat_id using N-gram tokenizer.
+4- Redis used to enqueue new chats and messages and run their creation in a Golang app using go routines
+5- Implemented a cron job that runs every 30 minutes to update the chats_count in applications table and messages_count in chats table
