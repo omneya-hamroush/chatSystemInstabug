@@ -18,6 +18,8 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
-every 10.seconds do
-    rake 'update_counts:update'
+every 1.minutes do
+    rake 'update_counts:update', output: 'log/cron.log'
+    # command "/workspace/bin/rake update_counts:update >> /var/log/cron.log 2>&1"
+
 end

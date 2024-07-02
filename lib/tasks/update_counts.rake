@@ -1,4 +1,3 @@
-# lib/tasks/update_counts.rake
 
 namespace :update_counts do
   desc "Update chats_count in Application table and messages_count in Chat table"
