@@ -1,5 +1,5 @@
 class ApplicationsController < ApplicationController
-    skip_before_action :verify_authenticity_token, only: [:create]
+    skip_before_action :verify_authenticity_token, only: [:create, :update]
 
     before_action :set_application, only: [:show, :update]
 
@@ -21,11 +21,9 @@ class ApplicationsController < ApplicationController
         end
         end
 
-        private
+        
 
-        def application_params
-        params.require(:application).permit(:name)
-    end
+        
 
     def update
         if @application.update(application_params)
@@ -41,6 +39,9 @@ class ApplicationsController < ApplicationController
         @application = Application.find_by!(token: params[:token])
     end
 
+    def application_params
+        params.require(:application).permit(:name)
+    end
     def application_params
         params.require(:application).permit(:name)
     end
