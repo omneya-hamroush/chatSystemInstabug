@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 	"time"
@@ -19,14 +20,14 @@ var ctx = context.Background()
 var db *sql.DB
 
 type Chat struct {
-	ApplicationID int `json:"application_id"`
-	Number        int `json:"number"`
+	ApplicationToken string `json:"token"`
+	// Number           int    `json:"number"`
 }
 
 type Message struct {
-	ChatID  int    `json:"chat_id"`
+	ChatID  string `json:"chat_id"`
 	Content string `json:"content"`
-	Number  int    `json:"number"`
+	// ApplicationToken string `json:"token"`
 }
 
 func initDB() (*sql.DB, error) {
@@ -37,14 +38,20 @@ func initDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func getNextChatNumber(tx *sql.Tx, applicationID int) (int, error) {
+func getNextChatNumber(tx *sql.Tx, applicationToken string) (int, int, error) {
 	var maxNumber int
-	query := "SELECT COALESCE(MAX(number), 0) FROM chats WHERE application_id = ? FOR UPDATE"
-	err := tx.QueryRow(query, applicationID).Scan(&maxNumber)
+	var appID int
+	query1 := "select id from applications where token = ? limit 1  FOR UPDATE"
+	err := tx.QueryRow(query1, applicationToken).Scan(&appID)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
-	return maxNumber + 1, nil
+	query := "SELECT COALESCE(MAX(number), 0) FROM chats WHERE application_id = ? FOR UPDATE"
+	err = tx.QueryRow(query, appID).Scan(&maxNumber)
+	if err != nil {
+		return 0, appID, err
+	}
+	return maxNumber + 1, appID, nil
 }
 
 func getNextMessageNumber(tx *sql.Tx, chatID int) (int, error) {
@@ -147,13 +154,13 @@ func processChatCreation(db *sql.DB, wg *sync.WaitGroup, chat Chat) {
 	}
 	defer tx.Rollback()
 
-	number, err := getNextChatNumber(tx, chat.ApplicationID)
+	number, applicationID, err := getNextChatNumber(tx, chat.ApplicationToken)
 	if err != nil {
 		log.Println("Error getting next chat number:", err)
 		return
 	}
 
-	err = insertChat(tx, chat.ApplicationID, number)
+	err = insertChat(tx, applicationID, number)
 	if err != nil {
 		log.Println("Error inserting chat:", err)
 		return
@@ -165,7 +172,7 @@ func processChatCreation(db *sql.DB, wg *sync.WaitGroup, chat Chat) {
 		return
 	}
 
-	log.Printf("Successfully inserted chat for application %d with number %d\n", chat.ApplicationID, number)
+	log.Printf("Successfully inserted chat for application %d with number %d\n", applicationID, number)
 }
 
 func processMessageCreation(db *sql.DB, wg *sync.WaitGroup, message Message) {
@@ -177,14 +184,19 @@ func processMessageCreation(db *sql.DB, wg *sync.WaitGroup, message Message) {
 		return
 	}
 	defer tx.Rollback()
+	chat_id, err_cast := strconv.Atoi(message.ChatID)
+	if err_cast != nil {
+		log.Println("Error converting chat id", err)
+		return
+	}
 
-	number, err := getNextMessageNumber(tx, message.ChatID)
+	number, err := getNextMessageNumber(tx, chat_id)
 	if err != nil {
 		log.Println("Error getting next message number:", err)
 		return
 	}
 
-	err = insertMessage(tx, message.ChatID, number, message.Content)
+	err = insertMessage(tx, chat_id, number, message.Content)
 	if err != nil {
 		log.Println("Error inserting message:", err)
 		return

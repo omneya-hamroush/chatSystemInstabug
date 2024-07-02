@@ -49,6 +49,9 @@ gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 
 
+gem 'dotenv-rails', groups: [:development, :test]
+
+
 gem 'whenever', require: false
 
 gem 'sidekiq'

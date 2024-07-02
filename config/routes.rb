@@ -1,17 +1,20 @@
 Rails.application.routes.draw do
-  get 'messages/create'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Custom routes for creating chats and messages
+  # These can be nested under their respective resources
+  # post 'applications/:application_token/chats', to: 'chats#create'
+  # post 'applications/:application_token/chats/:chat_id/messages', to: 'messages#create'
+
+  # Route for searching messages
+  get 'messages_search', to: 'messages#search'
+
+  # RESTful routes for applications, chats, and messages
+  resources :applications, param: :token, only: [:index, :show, :update, :create] do
+    resources :chats, only: [:index, :show, :update, :create] do
+      resources :messages, only: [:index, :show, :update, :create]
+    end
+  end
 
   # Defines the root path route ("/")
+  # Uncomment and customize the root path as needed
   # root "articles#index"
-  resources :applications, only: [:create]
-  # resources :chats, only: [:create]
-  post 'create_chat', to: 'chats#create'
-
-  # resources :messages do
-  post 'create_message', to: 'messages#create'
-  get 'messages_search', to: 'messages#search'
-  # end
-
-
 end

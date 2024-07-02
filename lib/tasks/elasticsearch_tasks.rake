@@ -10,4 +10,4 @@ namespace :elasticsearch do
         Message.import 
     end
 end
-  
+
